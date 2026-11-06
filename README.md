@@ -2,7 +2,7 @@
 
 A tiny, sassy orange kitten who lives in your browser. She roams every tab, naps when you're idle, purrs when you pet her, and swats whatever text you select right off the page. Give her an AI key and she takes orders.
 
-She's the same Bug who lives on [paraspatle.in](https://paraspatle.in), now free to roam the rest of the internet.
+She's the same Bug who lives on [paraspatle.in](https://www.paraspatle.in/bug), now free to roam the rest of the internet.
 
 ![Bug knocking a heading off a website](docs/swat.png)
 
@@ -52,7 +52,7 @@ You can change the model on the settings page. **Test key** makes one tiny reque
 
 Click the toolbar icon to turn Bug off everywhere or just on the current site, and to switch sounds on (meows, purrs, hisses; all synthesized, no audio files).
 
-**Sites where Bug stays away:** the settings page has an exclude list (your bank, Google Docs, whatever). A site covers its subdomains too, and you can paste a full URL. [paraspatle.in](https://paraspatle.in) is always on it: that's Bug's home, and she already lives there.
+**Sites where Bug stays away:** the settings page has an exclude list (your bank, Google Docs, whatever). A site covers its subdomains too, and you can paste a full URL. [paraspatle.in](https://www.paraspatle.in) is always on it: that's Bug's home, and she already lives there.
 
 <img src="docs/popup.png" width="320" alt="Popup">
 
@@ -74,4 +74,4 @@ How it fits together:
 
 ## License
 
-MIT. Made by [Paras Patle](https://paraspatle.in).
+MIT. Made by [Paras Patle](https://www.paraspatle.in) ([@avgparasite](https://x.com/avgparasite)). Bug also plays poker: [gully poker](https://poker.paraspatle.in/bug).
