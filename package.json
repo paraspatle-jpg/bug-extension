@@ -1,0 +1,26 @@
+{
+  "name": "bug-extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bug, a tiny sassy orange kitten who lives in your browser. Bring your own AI key.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "zip": "node build.mjs && cd dist && zip -qr ../bug-extension.zip . && echo bug-extension.zip",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "framer-motion": "11.11.17",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "esbuild": "^0.24.0",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3"
+  }
+}
