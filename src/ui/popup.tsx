@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
 import CatArt from "../cat/CatArt"
-import { type Brain, type Prefs, DEFAULT_BRAIN, DEFAULT_PREFS, PROVIDERS, getBrain, getPrefs, setPrefs, siteOf } from "../store"
+import { type Brain, type Prefs, BUILT_IN_EXCLUDES, DEFAULT_BRAIN, DEFAULT_PREFS, PROVIDERS, covers, getBrain, getPrefs, setPrefs, siteOf } from "../store"
 import { Toggle, injectStyles } from "./shared"
 
 function Popup() {
@@ -25,9 +25,11 @@ function Popup() {
     setP(next)
     void setPrefs(next)
   }
-  const siteOn = !prefs.disabledSites.includes(site)
+  // an exclude rule like "google.com" also covers docs.google.com
+  const rule = prefs.disabledSites.find((r) => covers(r, site))
+  const siteOn = !rule
   const hasKey = !!brain.keys[brain.provider]?.trim()
-  const home = /(^|\.)paraspatle\.in$/.test(site)
+  const home = BUILT_IN_EXCLUDES.some((r) => covers(r, site))
 
   if (!ready) return <div className="h-[300px] w-[300px]" />
   return (
@@ -45,10 +47,10 @@ function Popup() {
       <Toggle label="Bug is on" sub="on every site" on={prefs.enabled} onChange={(v) => update({ enabled: v })} />
       {site && !home && (
         <Toggle
-          label={`On ${site}`}
+          label={`On ${rule ?? site}`}
           on={siteOn}
           disabled={!prefs.enabled}
-          onChange={(v) => update({ disabledSites: v ? prefs.disabledSites.filter((s) => s !== site) : [...prefs.disabledSites, site] })}
+          onChange={(v) => update({ disabledSites: v ? prefs.disabledSites.filter((s) => !covers(s, site)) : [...prefs.disabledSites, site] })}
         />
       )}
       {home && <p className="px-3 py-2 text-xs text-muted-foreground">This is Bug&apos;s home. She already lives here.</p>}
@@ -75,7 +77,10 @@ function Popup() {
         </button>
       </div>
 
-      <a href="https://paraspatle.in" target="_blank" rel="noreferrer" className="mt-3 block text-center text-[11px] text-muted-foreground no-underline hover:text-foreground">
+      <button type="button" onClick={() => chrome.runtime.openOptionsPage()} className="mt-2 block w-full text-center text-[11px] text-muted-foreground hover:text-foreground">
+        sites where Bug stays away ({prefs.disabledSites.length + BUILT_IN_EXCLUDES.length})
+      </button>
+      <a href="https://paraspatle.in" target="_blank" rel="noreferrer" className="mt-1 block text-center text-[11px] text-muted-foreground no-underline hover:text-foreground">
         made by paraspatle.in
       </a>
     </div>

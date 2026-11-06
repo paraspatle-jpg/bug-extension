@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
 import CatArt from "../cat/CatArt"
-import { type Brain, type Provider, DEFAULT_BRAIN, PROVIDERS, getBrain, setBrain } from "../store"
+import { type Brain, type Provider, BUILT_IN_EXCLUDES, DEFAULT_BRAIN, PROVIDERS, getBrain, getPrefs, setBrain, setPrefs, toRule } from "../store"
 import { injectStyles } from "./shared"
 
 function Options() {
@@ -131,6 +131,8 @@ function Options() {
         )}
       </section>
 
+      <Excludes />
+
       <section className="mt-6 text-sm leading-relaxed text-muted-foreground">
         <h2 className="m-0 text-sm font-medium text-foreground">Where your key goes</h2>
         <p className="m-0 mt-1">
@@ -144,6 +146,73 @@ function Options() {
         </p>
       </section>
     </main>
+  )
+}
+
+/** Sites where Bug stays away. Her home (paraspatle.in) is always on the list. */
+function Excludes() {
+  const [list, setList] = useState<string[]>([])
+  const [input, setInput] = useState("")
+  const [error, setError] = useState("")
+  useEffect(() => {
+    void getPrefs().then((p) => setList(p.disabledSites))
+    const onChange = (c: Record<string, chrome.storage.StorageChange>, area: string) => {
+      if (area === "local" && c.prefs) setList(c.prefs.newValue?.disabledSites ?? [])
+    }
+    chrome.storage.onChanged.addListener(onChange)
+    return () => chrome.storage.onChanged.removeListener(onChange)
+  }, [])
+  const save = (next: string[]) => {
+    setList(next)
+    void setPrefs({ disabledSites: next })
+  }
+  const add = () => {
+    const r = toRule(input)
+    if (!r) return setError("That doesn't look like a website. Try something like mail.google.com")
+    setError("")
+    setInput("")
+    if (!list.includes(r) && !BUILT_IN_EXCLUDES.includes(r)) save([...list, r].sort())
+  }
+  return (
+    <section className="mt-6 rounded-2xl border p-5">
+      <h2 className="m-0 text-sm font-medium">Sites where Bug stays away</h2>
+      <p className="m-0 mt-1 text-xs text-muted-foreground">A site also covers its subdomains: google.com keeps her off docs.google.com too.</p>
+      <form
+        className="mt-3 flex gap-2"
+        onSubmit={(e) => {
+          e.preventDefault()
+          add()
+        }}
+      >
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="e.g. mybank.com"
+          aria-label="Site to exclude"
+          className="min-w-0 flex-1 rounded-xl border bg-background px-3 py-2 text-sm outline-none focus:border-brand"
+        />
+        <button type="submit" className="rounded-xl border px-4 text-sm font-medium hover:bg-muted">
+          Add
+        </button>
+      </form>
+      {error && <p className="m-0 mt-1.5 text-xs text-brand">{error}</p>}
+      <ul className="m-0 mt-3 list-none divide-y rounded-xl border p-0">
+        {BUILT_IN_EXCLUDES.map((s) => (
+          <li key={s} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
+            <span>{s}</span>
+            <span className="text-xs text-muted-foreground">Bug&apos;s home: she already lives there</span>
+          </li>
+        ))}
+        {list.map((s) => (
+          <li key={s} className="flex items-center justify-between gap-3 px-3 py-2 text-sm">
+            <span>{s}</span>
+            <button type="button" onClick={() => save(list.filter((x) => x !== s))} className="text-xs text-muted-foreground hover:text-foreground">
+              remove
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 

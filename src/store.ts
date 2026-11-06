@@ -48,6 +48,21 @@ export function saveSaved(p: Partial<Saved>) {
   chrome.storage.local.set({ cat: saved }).catch(() => {})
 }
 
+/** Sites Bug never visits, whatever the settings: paraspatle.in has its own Bug. */
+export const BUILT_IN_EXCLUDES = ["paraspatle.in"]
+
+/** "example.com" also covers www.example.com and any subdomain like docs.example.com. */
+export const covers = (rule: string, host: string) => host === rule || host.endsWith("." + rule)
+export const isExcluded = (host: string, list: string[]) => [...BUILT_IN_EXCLUDES, ...list].some((r) => covers(r, host))
+
+/** Turn whatever someone pastes ("https://www.Bank.com/login") into a site rule ("bank.com"). */
+export function toRule(input: string) {
+  const t = input.trim().toLowerCase()
+  if (!t) return ""
+  const host = siteOf(/^[a-z]+:\/\//.test(t) ? t : `https://${t}`)
+  return /^[a-z0-9.-]+\.[a-z]{2,}$|^localhost$/.test(host) ? host : ""
+}
+
 export const siteOf = (url: string) => {
   try {
     return new URL(url).hostname.replace(/^www\./, "")

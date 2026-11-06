@@ -2,7 +2,7 @@ import { createRoot, type Root } from "react-dom/client"
 import css from "../build/bug.css"
 import Cat from "./cat/Cat"
 import { setSoundOn } from "./cat/sound"
-import { getPrefs, initSaved, siteOf } from "./store"
+import { getPrefs, initSaved, isExcluded, siteOf } from "./store"
 
 /**
  * Puts Bug on the page: a fixed, click-through host element with a shadow
@@ -10,8 +10,6 @@ import { getPrefs, initSaved, siteOf } from "./store"
  * Mounts/unmounts live when you flip her on/off in the popup.
  */
 
-// paraspatle.in already has its own Bug: don't bring a second one
-const HOME = /(^|\.)paraspatle\.in$/
 const site = siteOf(location.href)
 
 let host: HTMLElement | null = null
@@ -54,7 +52,8 @@ function pageStyles() {
 async function sync() {
   const p = await getPrefs()
   setSoundOn(p.sound)
-  const on = p.enabled && !p.disabledSites.includes(site) && !HOME.test(site)
+  // paraspatle.in (her home, built in) and the visitor's own exclude list
+  const on = p.enabled && !isExcluded(site, p.disabledSites)
   if (on) mount()
   else unmount()
 }

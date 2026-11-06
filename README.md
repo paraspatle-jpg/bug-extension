@@ -52,6 +52,8 @@ You can change the model on the settings page. **Test key** makes one tiny reque
 
 Click the toolbar icon to turn Bug off everywhere or just on the current site, and to switch sounds on (meows, purrs, hisses; all synthesized, no audio files).
 
+**Sites where Bug stays away:** the settings page has an exclude list (your bank, Google Docs, whatever). A site covers its subdomains too, and you can paste a full URL. [paraspatle.in](https://paraspatle.in) is always on it: that's Bug's home, and she already lives there.
+
 <img src="docs/popup.png" width="320" alt="Popup">
 
 ## Build from source
