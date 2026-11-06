@@ -1,6 +1,6 @@
 {
   "name": "bug-extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Bug, a tiny sassy orange kitten who lives in your browser. Bring your own AI key.",
   "type": "module",
